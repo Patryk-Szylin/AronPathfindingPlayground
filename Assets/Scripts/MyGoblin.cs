@@ -45,11 +45,19 @@ public class MyGoblin : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                Instantiate(MWall, hit.point, Quaternion.identity);
+                var graph = AstarPath.active.graphs[0];
+                var point = graph.GetNearest(hit.point);
+                var isWalkable = point.node.Walkable;
+
+                if (isWalkable)
+                {
+                    Instantiate(MWall, (Vector3)point.node.position, Quaternion.identity);
+                    point.node.Walkable = false;
+                }
             }
         }
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;

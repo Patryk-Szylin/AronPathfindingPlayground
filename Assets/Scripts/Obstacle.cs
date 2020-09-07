@@ -1,6 +1,8 @@
 ﻿using Pathfinding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public class Obstacle : MonoBehaviour
@@ -10,7 +12,18 @@ public class Obstacle : MonoBehaviour
 
     private void Start()
     {
-        node = AstarPath.active.GetNearest(transform.position, NNConstraint.Default).node;
+        node = AstarPath.active.graphs[0].GetNearest(transform.position, NNConstraint.Default).node;
+
+        node.Walkable = false;
+
+        Observable.Interval(TimeSpan.FromSeconds(2f))
+            .Take(1)
+            .Subscribe(_ =>
+            {
+                node.Walkable = true;
+                Destroy(this.gameObject);
+            });
+
     }
 
     private void Update()
